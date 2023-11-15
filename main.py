@@ -8,6 +8,8 @@ import base64
 
 app = Flask(__name__)
 
+def rtmpServer = "rtmp://35.185.190.46/live/dangbaokhang"
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -25,7 +27,7 @@ def capture():
     (width, height)=(130, 100)
 
     face_cascade=cv2.CascadeClassifier(haar_file)
-    webcam=cv2.VideoCapture(0)
+    webcam=cv2.VideoCapture(rtmpServer)
 
     imagePaths=[os.path.join(path,f) for f in os.listdir(path)]
     tam=0
@@ -63,18 +65,18 @@ def capture():
             face_resize=cv2.resize(face,(width,height))
 
             cv2.imwrite("Datasets/User."+str(face_id)+"."+str(count)+".png",face_resize)
-
+            print(count)
             # _, buffer = cv2.imencode('.png', im)
             # img_str = base64.b64encode(buffer).decode('utf-8')
             # captured_images.append(img_str)
             
-        cv2.imshow('OpenCV', im)
-        key = cv2.waitKey(10)& 0xff
-        if key == 27:
-            break
+        # cv2.imshow('OpenCV', im)
+        # key = cv2.waitKey(10)& 0xff
+        # if key == 27:
+        #     break
     print("\n Thoát")
     webcam.release()
-    cv2.destroyAllWindows() 
+    # cv2.destroyAllWindows() 
     return redirect('/train')
 
 @app.route('/train')
@@ -126,7 +128,7 @@ def recognize():
     id=0
 
     names=['Nguyen Phuong Thanh', '1','2',"Dang Bao Khang"]
-    webcam=cv2.VideoCapture(0)
+    webcam=cv2.VideoCapture(rtmpServer)
 
     while True:
         ret, img= webcam.read()
@@ -152,7 +154,7 @@ def recognize():
             cv2.putText(img, str(id),(x+5,y-5), font,1,(255,255,255),2)
             cv2.putText(img, str(confidence), (x+5,y+h-5),font,1,(255,255,0),1)
 
-        cv2.imshow("Nhận diện khuôn mặt",img)
+        # cv2.imshow("Nhận diện khuôn mặt",img)
 
         k=cv2.waitKey(10)& 0xff
         if k==27:
@@ -160,7 +162,7 @@ def recognize():
 
     print("\n Thoát")
     webcam.release()
-    cv2.destroyAllWindows()
+    # cv2.destroyAllWindows()
     return render_template('recognize.html') 
 
 if __name__ == '__main__':
