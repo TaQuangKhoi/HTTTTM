@@ -32,12 +32,9 @@ def capture():
     for imagePath in imagePaths:
         try:
             id=int(os.path.split(imagePath)[-1].split(".")[1])
-            print("id",id)
             if tam<=id: 
                 tam=id
                 tam+=1
-            print("3",tam)
-            
         except PIL.UnidentifiedImageError:
             print(f"Unable to identify image: {imagePath}")
             continue
@@ -45,7 +42,7 @@ def capture():
             print(f"Skipping invalid image: {imagePath}")
             continue
 
-    print("1",tam)
+    
     face_id=tam
     print("\n Nhập id khuôn mặt <return> ==> ",tam)
 
