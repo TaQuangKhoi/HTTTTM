@@ -12,7 +12,7 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
-@app.route('/capture') 
+@app.route('/capture')
 def capture():
     haar_file='haarcascade_frontalface_default.xml'
 
@@ -21,7 +21,7 @@ def capture():
     path=os.path.join(datasets)
     if not os.path.isdir(path):
         os.mkdir(path)
-        
+
     (width, height)=(130, 100)
 
     face_cascade=cv2.CascadeClassifier(haar_file)
@@ -33,8 +33,7 @@ def capture():
         try:
             id=int(os.path.split(imagePath)[-1].split(".")[1])
             if tam<=id: 
-                tam=id
-                tam+=1
+                tam = id + 1
         except PIL.UnidentifiedImageError:
             print(f"Unable to identify image: {imagePath}")
             continue
@@ -42,10 +41,9 @@ def capture():
             print(f"Skipping invalid image: {imagePath}")
             continue
 
-    
-    face_id=tam
-    print("\n Nhập id khuôn mặt <return> ==> ",tam)
 
+    face_id=tam
+    print("\n Nhập id khuôn mặt <return> ==> ", face_id)
     print("\n Khởi tạo camera...")
 
     count=0
@@ -62,19 +60,19 @@ def capture():
             count+=1
             face_resize=cv2.resize(face,(width,height))
 
-            cv2.imwrite("Datasets/User."+str(face_id)+"."+str(count)+".png",face_resize)
+            cv2.imwrite(f"Datasets/User.{str(face_id)}.{count}.png", face_resize)
 
-            # _, buffer = cv2.imencode('.png', im)
-            # img_str = base64.b64encode(buffer).decode('utf-8')
-            # captured_images.append(img_str)
-            
+                    # _, buffer = cv2.imencode('.png', im)
+                    # img_str = base64.b64encode(buffer).decode('utf-8')
+                    # captured_images.append(img_str)
+
         cv2.imshow('OpenCV', im)
         key = cv2.waitKey(10)& 0xff
         if key == 27:
             break
     print("\n Thoát")
     webcam.release()
-    cv2.destroyAllWindows() 
+    cv2.destroyAllWindows()
     return redirect('/train')
 
 @app.route('/train')
@@ -143,14 +141,10 @@ def recognize():
         for (x,y,w,h) in faces:
             cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
             id,confidence=recognizer.predict(gray[y:y+h,x:x+w])
-            if (confidence<100):
-                id=names[id]
-                confidence="{0}%".format(round(100-confidence))
-            else:
-                id="unknown"
-                confidence="{0}%".format(round(100-confidence))
+            id = names[id] if (confidence<100) else "unknown"
+            confidence="{0}%".format(round(100-confidence))
             cv2.putText(img, str(id),(x+5,y-5), font,1,(255,255,255),2)
-            cv2.putText(img, str(confidence), (x+5,y+h-5),font,1,(255,255,0),1)
+            cv2.putText(img, confidence, (x+5,y+h-5), font, 1, (255,255,0), 1)
 
         cv2.imshow("Nhận diện khuôn mặt",img)
 

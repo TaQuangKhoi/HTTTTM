@@ -26,14 +26,10 @@ while True:
     for (x,y,w,h) in faces:
         cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
         id,confidence=recognizer.predict(gray[y:y+h,x:x+w])
-        if (confidence<100):
-            id=names[id]
-            confidence="{0}%".format(round(100-confidence))
-        else:
-            id="unknown"
-            confidence="{0}%".format(round(100-confidence))
+        id = names[id] if (confidence<100) else "unknown"
+        confidence="{0}%".format(round(100-confidence))
         cv2.putText(img, str(id),(x+5,y-5), font,1,(255,255,255),2)
-        cv2.putText(img, str(confidence), (x+5,y+h-5),font,1,(255,255,0),1)
+        cv2.putText(img, confidence, (x+5,y+h-5), font, 1, (255,255,0), 1)
 
     cv2.imshow("Nhan dien khuon mat",img)
 
